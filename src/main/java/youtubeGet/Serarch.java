@@ -58,7 +58,6 @@ import com.google.api.services.youtube.model.Video;
  */
 public class Serarch extends HttpServlet {
 
-//(1)プログラムで使用する変数、ファイルの定義
 
 	//APIキーを記載したファイル
 	private static String PROPERTIES_FILENAME = "youtube.properties";
@@ -82,7 +81,6 @@ public class Serarch extends HttpServlet {
 			throws ServletException, IOException {
 
 
-// (2)プロパティファイルを読み込む
 		Properties properties = new Properties();
 		try {
 			InputStream in = Search.class.getResourceAsStream("/" + PROPERTIES_FILENAME);
@@ -99,13 +97,16 @@ public class Serarch extends HttpServlet {
 			public void initialize(HttpRequest request) throws IOException {}
 		}).setApplicationName("youtube-cmdline-search-sample").build();
 
-//(3)JSP入力フォームから受け取った情報からリクエストパラメータを作成する
+		//(1)サーバから動画情報を取得する
 
+		//(1-1)リクエストパラメータを作成
 		YouTube.Search.List search = youtube.search().list("id,snippet");
 
+		//キーワードの取得
 		String queryTerm = new String(request.getParameter("keyWord").getBytes("ISO-8859-1"));
 		queryTerm = URLDecoder.decode(queryTerm,"UTF-8");
 
+		//APIキーの設定
 		String apiKey = properties.getProperty("youtube.apikey");
 		search.setKey(apiKey);
 		search.setQ(queryTerm);
@@ -130,15 +131,11 @@ public class Serarch extends HttpServlet {
 		//動画の長さの指定
 		search.setVideoDuration(request.getParameter("Video-long"));
 
-		//ソート条件
+		//ソート条件の設定
 		search.setType("video");
 		search.setOrder(request.getParameter("Sort"));
 
-		/*
-		 * This method reduces the info returned to only the fields we need and makes calls more
-		 * efficient.
-		 */
-		//search.setFields("items(id/kind,id/videoId,snippet/title,snippet/channelTitle,snippet/channelId,snippet/thumbnails/default/url)");
+		//取得件数の設定
 		search.setFields("items(*),nextPageToken");
 		search.setMaxResults(NUMBER_OF_VIDEOS_RETURNED);
 		System.out.println(search);
@@ -146,9 +143,9 @@ public class Serarch extends HttpServlet {
 
 		SearchListResponse searchResponse = null;
 
-//(4)リクエストパラメータを実行する→LISTに格納する。(リストの格納は他メソッドで処理している
+		//(1-2)リクエストパラメータを実行
 
-		for(int i=0;i < 1; i++) {
+		for(int i=0;i < 3; i++) {
 			if (searchResponse != null && searchResponse.getNextPageToken() != null) {
 				search.setPageToken(searchResponse.getNextPageToken());
 			}
@@ -168,7 +165,8 @@ public class Serarch extends HttpServlet {
 			}
 		}
 
-//(5)LISTに格納した結果をCSVに書き込み→ダウンロード
+		//(2)動画情報をcsvにする
+		//(3)csvをダウンロードできるようにする
 		response.setContentType("text/csv");
 	    response.setHeader("Content-Disposition", "attachment; filename=\"userDirectory.csv\"");
 	    try
@@ -179,7 +177,7 @@ public class Serarch extends HttpServlet {
 	    	String charset = "UTF-8";
 
 	        OutputStream outputStream = response.getOutputStream();
-	        String Header = "動画タイトル,リンク,再生回数,チャンネル名,チャンネル登録者数";
+	        String Header = "動画タイトル,リンク,再生回数,投稿日,チャンネル名,チャンネル登録者数";
 	        outputStream.write(Header.getBytes(charset));
 	        outputStream.write(NEW_LINE.getBytes(charset));
 
@@ -198,14 +196,16 @@ public class Serarch extends HttpServlet {
 
 	}
 
-//(4)リクエストの結果をLISTに格納するメソッド
+
 	private static void prettyPrint(Iterator<SearchResult> iteratorSearchResults, String query,String apiKey) throws IOException {
 
-		YouTube.Videos.List list = youtube.videos().list("statistics,snippet");
-		list.setKey(apiKey);
+		//(1-3)動画の詳細情報を取得する
 
-		YouTube.Channels.List channels_list = youtube.channels().list("statistics");
-		channels_list.setKey(apiKey);
+		YouTube.Videos.List VideoList = youtube.videos().list("statistics,snippet");
+		VideoList.setKey(apiKey);
+
+		YouTube.Channels.List ChannelList = youtube.channels().list("statistics");
+		ChannelList.setKey(apiKey);
 
 		while (iteratorSearchResults.hasNext()) {
 
@@ -216,28 +216,33 @@ public class Serarch extends HttpServlet {
 			// Double checks the kind is video.
 			if (rId.getKind().equals("youtube#video")) {
 
-				channels_list.setId(singleVideo.getSnippet().getChannelId());
+				//(1-3-1)VideoInformations = サーバから"動画情報を取得する(params)
 				String VideoID = rId.getVideoId();
-				list.setId(VideoID);
-				Video v = list.execute().getItems().get(0);
-				Channel c = channels_list.execute().getItems().get(0);
+				VideoList.setId(VideoID);
+				Video VideoInformations = VideoList.execute().getItems().get(0);
 
+				//(1-3-2)ChannelInformations = サーバからチャンネル情報を取得する(params)
+				ChannelList.setId(singleVideo.getSnippet().getChannelId());
+				Channel ChannelInformations = ChannelList.execute().getItems().get(0);
+
+
+				//(1-4)動画情報リストを作成する
 				String Title = singleVideo.getSnippet().getTitle(); //動画タイトル
-				String viewCount = String.valueOf(v.getStatistics().getViewCount()); //再生回数
+				String viewCount = String.valueOf(VideoInformations.getStatistics().getViewCount()); //再生回数
 				String URL = "www.youtube.com/watch?v=" + VideoID; //URL
 				SearchResultSnippet snippet = singleVideo.getSnippet();
 				DateTime publishedAt = snippet.getPublishedAt();
 				String publishedAtString = publishedAt.toString(); //投稿日
 				String Channel = singleVideo.getSnippet().getChannelTitle(); //チャンネル名
-				String TourokuSya = String.valueOf(c.getStatistics().getSubscriberCount()); //チャンネル登録者数
+				String TourokuSya = String.valueOf(ChannelInformations.getStatistics().getSubscriberCount()); //チャンネル登録者数
 
-//				String outputResult = Title + "," + URL + "," + viewConut + "," + Channel + "," + TourokuSya;
+				//String outputResult = Title + "," + URL + "," + viewConut + "," + Channel + "," + TourokuSya;
 
-				String outputData[] = {Title, URL, viewCount, Channel, TourokuSya};
+				//動画情報をLISTに格納
+				String outputData[] = {Title, URL, viewCount,publishedAtString, Channel, TourokuSya};
 				String outputResult = String.join(",", outputData);
 				Tmplist.add(outputResult);
 
-				System.out.println( publishedAtString);
 
 				//取得結果をコンソールに表示させる
 				//System.out.println("タイトル: " + Title);
