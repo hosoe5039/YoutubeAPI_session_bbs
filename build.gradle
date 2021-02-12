@@ -30,7 +30,8 @@ dependencies {
     compile group: 'joda-time', name: 'joda-time', version: '2.10.8'
     compile group: 'com.google.apis', name: 'google-api-services-youtube', version: 'v3-rev222-1.25.0'
     compile group: 'org.apache.xerces', name: 'org.apache.xerces', version: '2.8.0.v200705301630'
-
+    compile group: 'clojure-interop', name: 'java.sql', version: '1.0.5'
+	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.23'
     compile 'org.codehaus.jackson:jackson-core-asl:1.9.2'
     compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.2'
 
