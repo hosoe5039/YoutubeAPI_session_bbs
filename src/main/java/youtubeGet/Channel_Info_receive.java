@@ -94,12 +94,14 @@ public class Channel_Info_receive extends HttpServlet{
 				//insert文のVALUESを設定
 				String id =String.valueOf(channel_resultSet.getInt("id"));
 				String subscriber_count =String.valueOf(ChannelInformations.getStatistics().getSubscriberCount()); //チャンネル登録者数
-				String insert_values = String.join(",", "'" + id + "'", "'" + subscriber_count + "'", "now()");
+				String view_count =String.valueOf(ChannelInformations.getStatistics().getViewCount());
+				String insert_values = String.join(",", "'" + id + "'", "'" + subscriber_count + "'","'" + view_count + "'", "now()");
 
 				//実行用のSQL文を作成
-				String Channel_Info_insert = "insert CHANNEL_INFO(CHANNELS_ID,subscriber_count,get_day)";
+				String Channel_Info_insert = "insert CHANNEL_INFO(CHANNELS_ID,subscriber_count,total_view_count,get_day)";
 				Channel_Info_insert = Channel_Info_insert + "values(" + insert_values + ");";
 				System.out.println(Channel_Info_insert);
+				System.out.println(8787);
 				//SQLを実行する
 				PreparedStatement channels_info_insert_state = conn.prepareStatement(Channel_Info_insert);
 				channels_info_insert_state.execute();
