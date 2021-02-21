@@ -24,7 +24,7 @@ import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTube.Search;
 import com.google.api.services.youtube.model.Channel;
 
-@WebServlet("/ChannelsInfo")
+@WebServlet("/Channels_Info")
 
 public class Channel_Info_receive extends HttpServlet{
 
@@ -35,8 +35,6 @@ public class Channel_Info_receive extends HttpServlet{
 		request.setCharacterEncoding("UTF-8");
 
 		//(1)YoutubeAPIを使用する準備をする
-
-
 		HttpTransport HTTP_TRANSPORT = new NetHttpTransport();//httpトランスポータ
 		final JsonFactory JSON_FACTORY = new JacksonFactory();//JSONオブジェクト
 		YouTube youtube;//YouTubeオブジェクト
@@ -66,7 +64,6 @@ public class Channel_Info_receive extends HttpServlet{
 
 		//(2)SQLテーブルCHANNELに接続をしてyoutube_channel_idを取得する
 
-		// DB関連の初期設定
 		Connection conn = Sql_conn.getDbConnection();
 		PreparedStatement channel_state =  null;
 		ResultSet channel_resultSet = null;
@@ -116,26 +113,3 @@ public class Channel_Info_receive extends HttpServlet{
 		request.getRequestDispatcher("/index.jsp").forward(request, response);
 	}
 }
-//以下のコメントは今度裕太さんに質問する時のために残しておく
-//		//(4)動画の詳細情報をSQLテーブルCHANNEL_INFOに保存する
-//		for(HashMap.Entry<String,String> entry : Channel_Info_list.entrySet()){
-//
-//			//テーブルCHANNElS_INFOに保存するデータの取得
-//		    String id = "'" + entry.getKey() + "'";
-//		    String subscriber_count =   "'" + entry.getValue() + "'";
-//
-//
-//		    //insertするSQL文作成
-//		    String Channel_Info_insert = "insert CHANNEL_INFO(CHANNELS_ID,subscriber_count,get_day)";
-//		    Channel_Info_insert = Channel_Info_insert + "values(" + insert_values + ");";
-//
-//		    try {
-//				PreparedStatement channels_info_insert_state = conn.prepareStatement(Channel_Info_insert);
-//				channels_info_insert_state.execute();
-//
-//			} catch (SQLException e) {
-//				e.printStackTrace();
-//			}
-//
-//		}
-
