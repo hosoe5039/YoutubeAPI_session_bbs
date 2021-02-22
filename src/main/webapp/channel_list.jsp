@@ -4,6 +4,7 @@
 	import = "java.net.URLEncoder"
 	import = "youtubeGet.Channel_Info_Bean" %>
 <%
+String mode = (String)request.getAttribute("mode");
 List <Channel_Info_Bean> list = (List<Channel_Info_Bean>)request.getAttribute("Channels_list");
 %>
 <!DOCTYPE html">
@@ -18,7 +19,7 @@ List <Channel_Info_Bean> list = (List<Channel_Info_Bean>)request.getAttribute("C
 <%for (Channel_Info_Bean channel: list){
 	String channel_name_encode = URLEncoder.encode(channel.getChannel_Name(),"UTF-8"); %>
 
-<p><a href="./Chart_display?id=<%=channel.getID()%>&channel=<%=URLEncoder.encode(channel_name_encode, "UTF-8")%>">
+<p><a href="./Chart_display?mode=<%=mode%>&id=<%=channel.getID()%>&channel=<%=URLEncoder.encode(channel_name_encode, "UTF-8")%>">
 <%=channel.getChannel_Name()%>
 </a></p>
 

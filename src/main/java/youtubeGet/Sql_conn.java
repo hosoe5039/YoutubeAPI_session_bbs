@@ -21,8 +21,8 @@ public class Sql_conn {
 					"root", "searchman");
 
 			//テスト環境
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/youtubeinfo_test?serverTimezone=UTC&useSSL=false",
-					"root", "searchman");
+//			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/youtubeinfo_test?serverTimezone=UTC&useSSL=false",
+//					"root", "searchman");
 
 		}catch (Exception e) {
 			e.printStackTrace();

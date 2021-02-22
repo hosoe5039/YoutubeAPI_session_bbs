@@ -24,6 +24,10 @@ public class Channel_list_display extends HttpServlet{
 		//文字コード設定
 		request.setCharacterEncoding("UTF-8");
 
+		//モードの取得(登録者数 or 再生回数)
+		String mode = request.getParameter("mode");
+		request.setAttribute("mode", mode);
+
 		//(1)チャンネル一覧、読み出し用のSQL実行
 
 		Connection conn = Sql_conn.getDbConnection();

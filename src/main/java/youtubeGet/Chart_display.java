@@ -25,6 +25,9 @@ public class Chart_display extends HttpServlet{
 		// 文字コード
 		request.setCharacterEncoding("UTF-8");
 
+		String mode = request.getParameter("mode");
+
+
 		//取得対象のチャンネル名→JSPへ情報を転送する
 		String channel_name = URLDecoder.decode(request.getParameter("channel"),"UTF-8");
 		request.setAttribute("channel_name", channel_name);
@@ -33,15 +36,16 @@ public class Chart_display extends HttpServlet{
 
 		//チャンネル情報の読み出し条件の取得
 		String id = request.getParameter("id");
-		//String channel_name = request.getParameter("channel");
+
 
 		//DB接続
 		Connection conn = Sql_conn.getDbConnection();
 		PreparedStatement channel_info_state =  null;
 		ResultSet channel_info_resultSet = null;
 
-		String sql = "select subscriber_count, get_day from  CHANNEL_INFO where CHANNELS_ID = " + id + ";";
-
+		String sql = "select " + mode + ", get_day from  CHANNEL_INFO where CHANNELS_ID = " + id;
+		sql = sql + " AND " + mode + " is not null;";
+	System.out.println(sql);
 		try {
 			channel_info_state = conn.prepareStatement(sql);
 			channel_info_resultSet = channel_info_state.executeQuery();
@@ -54,23 +58,30 @@ public class Chart_display extends HttpServlet{
 
 		List<Channel_Info_Bean> Channel_info_list = new ArrayList<>();
 
-			try {
-				while (channel_info_resultSet.next()) {
-					Channel_Info_Bean channel = new Channel_Info_Bean();
+		try {
+			while (channel_info_resultSet.next()) {
+
+				Channel_Info_Bean channel = new Channel_Info_Bean();
+
+				if(mode.equals("subscriber_count")) {
 					channel.setSubscriber_count(channel_info_resultSet.getInt("subscriber_count"));
-					channel.setDay(String.valueOf(channel_info_resultSet.getDate("get_day")));
-					Channel_info_list.add(channel);
-
+				}else if(mode.equals("total_view_count")) {
+					channel.setTotal_view_count(channel_info_resultSet.getLong("total_view_count"));
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
+
+				channel.setDay(String.valueOf(channel_info_resultSet.getDate("get_day")));
+				Channel_info_list.add(channel);
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-			//(3)結果を取得して表示用JSPへ転送する
-			request.setAttribute("Channel_info_list", Channel_info_list);
+		//(3)結果を取得して表示用JSPへ転送する
+		request.setAttribute("Channel_info_list", Channel_info_list);
+		request.setAttribute("mode", mode);
 
-			//(4)JSPに遷移する
-			request.getRequestDispatcher("/channel_info_chart.jsp").forward(request, response);
+		//(4)JSPに遷移する
+		request.getRequestDispatcher("/channel_info_chart.jsp").forward(request, response);
 
 	}
 }

@@ -6,6 +6,7 @@ public class Channel_Info_Bean {
 		private String id; //チャンネルID
 		private String channel_name;//チャンネル名
 		private int subscriber_count;//チャンネル登録者数
+		private Long total_view_count;
 		private String get_day;//情報取得日
 
 
@@ -30,6 +31,13 @@ public class Channel_Info_Bean {
 		}
 		public void setSubscriber_count(int subscriber_count) {
 		    this.subscriber_count =subscriber_count;
+		}
+
+		public Long getTotal_view_count() {
+		    return total_view_count;
+		}
+		public void setTotal_view_count(Long total_view_count) {
+		    this.total_view_count = total_view_count;
 		}
 
 		public String getDay() {
