@@ -49,7 +49,7 @@ import = "youtubeGet.Channel_Info_Bean"%>
 			min_view_count = min_view_count - 10;
 			step_data = 10;
 		}else if (max_view_count != min_view_count){
-			if(max_view_count - min_view_count >= 10){
+			if(max_view_count - min_view_count <= 10){
 				step_data = (int)(max_view_count - min_view_count);
 			}else{
 				step_data = (int)(max_view_count - min_view_count) /10;
