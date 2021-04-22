@@ -18,11 +18,11 @@ public class Sql_conn {
 
 			//本番環境
 			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/youtubeinfo?serverTimezone=UTC&useSSL=false",
-					"root", "searchman");
+					"root", "Onion#01");
 
 			//テスト環境
 //			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/youtubeinfo_test?serverTimezone=UTC&useSSL=false",
-//					"root", "searchman");
+//					"root", "Onion#01");
 
 		}catch (Exception e) {
 			e.printStackTrace();

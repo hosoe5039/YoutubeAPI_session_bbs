@@ -7,6 +7,7 @@ import = "youtubeGet.Channel_Info_Bean"%>
 	String mode = (String)request.getAttribute("mode");
 	String channel_name =  "'"+ (String)request.getAttribute("channel_name") + "'";
 
+	// TODO あいうえお
 	List <Channel_Info_Bean> list = (List<Channel_Info_Bean>)request.getAttribute("Channel_info_list");
 
 	Channel_Info_Bean channel_info = list.get(0);
@@ -65,7 +66,7 @@ import = "youtubeGet.Channel_Info_Bean"%>
 
 			data_value_subscriber = channel.getSubscriber_count();
 
-			//チャンネル登録者の最大値、最小値を求める
+			// チャンネル登録者の最大値、最小値を求める
 			if(max_subscriber_count < data_value_subscriber){
 				max_subscriber_count = data_value_subscriber;
 			}else if(min_subscriber_count > data_value_subscriber){
@@ -83,7 +84,7 @@ import = "youtubeGet.Channel_Info_Bean"%>
 
 	}
 
-	//登録者推移グラフのStep数の決定
+	// 登録者推移グラフのStep数の決定
 	if(mode.equals("subscriber_count")){
 
 		chart_max = String.valueOf(max_subscriber_count);

@@ -9,6 +9,8 @@ public class Channel_Info_Bean {
 		private Long total_view_count;
 		private String get_day;//情報取得日
 
+		private String commment;
+
 
 
 		public Channel_Info_Bean(){};

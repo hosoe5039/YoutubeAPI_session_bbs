@@ -28,6 +28,17 @@ public class Channel_list_display extends HttpServlet{
 		String mode = request.getParameter("mode");
 		request.setAttribute("mode", mode);
 
+		List<Channel_Info_Bean> Channel_list = getChannels();
+
+		//(2)読み出し結果をJSPに転送
+		request.setAttribute("Channels_list", Channel_list);
+
+		//(3)JSPに遷移する
+		request.getRequestDispatcher("/channel_list.jsp").forward(request, response);
+
+	}
+
+	private List<Channel_Info_Bean> getChannels() {
 		//(1)チャンネル一覧、読み出し用のSQL実行
 
 		Connection conn = Sql_conn.getDbConnection();
@@ -61,13 +72,7 @@ public class Channel_list_display extends HttpServlet{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
-		//(2)読み出し結果をJSPに転送
-		request.setAttribute("Channels_list", Channel_list);
-
-		//(3)JSPに遷移する
-		request.getRequestDispatcher("/channel_list.jsp").forward(request, response);
-
+		return Channel_list;
 	}
 }
 
